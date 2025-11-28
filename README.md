@@ -388,10 +388,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact
 
+- **X**: [@Adedir2](https://x.com/Adedir2)
 - **GitHub**: [@Admuad](https://github.com/Admuad)
 - **Project**: [PolyBid Repository](https://github.com/Admuad/PolyBid)
 - **Discord**: Join the [Zama Discord](https://discord.gg/zama) and find me in #developer-program
-
 ---
 
 <p align="center">
