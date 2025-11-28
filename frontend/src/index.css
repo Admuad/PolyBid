@@ -1,0 +1,244 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 6.7%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 6.7%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 6.7%;
+    --primary: 170 100% 36%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 170 100% 36%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 6.7%;
+    --foreground: 0 0% 94.9%;
+    --card: 0 0% 6.7%;
+    --card-foreground: 0 0% 94.9%;
+    --popover: 0 0% 6.7%;
+    --popover-foreground: 0 0% 94.9%;
+    --primary: 170 100% 36%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 170 100% 36%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', 'DM Sans', system-ui, sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', monospace;
+  }
+}
+
+@layer utilities {
+  .glass-morphism {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .glass-morphism-dark {
+    background: rgba(17, 17, 17, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 184, 163, 0.2);
+  }
+  
+  .text-gradient-zama {
+    @apply bg-gradient-to-r from-zama-primary to-zama-primary-dark bg-clip-text text-transparent;
+  }
+  
+  .btn-zama {
+    @apply bg-zama-primary hover:bg-zama-primary-hover text-white font-semibold py-2 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-zama-primary/50;
+    will-change: transform, box-shadow;
+  }
+  
+  .card-zama {
+    @apply glass-morphism-dark rounded-xl p-6 transition-all duration-300 hover:border-zama-primary/50;
+    will-change: border-color;
+  }
+  
+  .animate-glow {
+    animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  /* Page transition support */
+  .animate-in {
+    animation: fadeIn 0.3s ease-in;
+  }
+  
+  .slide-in-from-top-2 {
+    animation: slideInFromTop 0.3s ease-out;
+  }
+}
+
+/* Keyframe animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 20px rgba(0, 184, 163, 0.5);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 40px rgba(0, 184, 163, 0.8);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromTop {
+  from {
+    transform: translateY(-8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Custom scrollbar - Desktop only */
+@media (hover: hover) and (pointer: fine) {
+  /* Global scrollbars - hide by default */
+  ::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  ::-webkit-scrollbar-track {
+    display: none;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    display: none;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    display: none;
+  }
+
+  /* Scrollable containers with visible scrollbar */
+  .scrollbar-hide::-webkit-scrollbar {
+    width: 8px !important;
+    height: 8px !important;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar-track {
+    background: transparent !important;
+    display: block !important;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar-thumb {
+    background: rgba(0, 184, 163, 0.4) !important;
+    border-radius: 4px;
+    display: block !important;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 184, 163, 0.8) !important;
+    display: block !important;
+  }
+}
+
+/* Mobile: Hide scrollbar styling */
+@media (hover: none) and (pointer: coarse) {
+  .scrollbar-hide::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .btn-zama {
+    transform: none !important;
+  }
+}
+
+/* Performance optimizations */
+.hero-animate,
+.card-zama,
+.btn-zama {
+  will-change: transform, opacity;
+}
+
+/* RainbowKit button fixes */
+.rainbowkit-wrapper {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  z-index: 100;
+}
+
+.rainbowkit-wrapper > div {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.rainbowkit-wrapper button {
+  height: 100%;
+  min-height: 40px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Remove will-change after animation completes */
+.animation-complete {
+  will-change: auto;
+}

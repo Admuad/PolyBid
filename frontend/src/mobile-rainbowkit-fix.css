@@ -1,0 +1,35 @@
+/* Mobile RainbowKit button fix */
+@media (max-width: 768px) {
+    .rainbowkit-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .rainbowkit-container button {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        writing-mode: horizontal-tb !important;
+        text-orientation: mixed !important;
+        white-space: nowrap !important;
+        min-width: auto !important;
+        padding: 8px 16px !important;
+        font-size: 14px !important;
+    }
+
+    .rainbowkit-container button>div,
+    .rainbowkit-container button span,
+    .rainbowkit-container button div[role="button"] {
+        display: flex !important;
+        align-items: center !important;
+        flex-direction: row !important;
+        writing-mode: horizontal-tb !important;
+        transform: none !important;
+    }
+
+    /* Force horizontal text for all children */
+    .rainbowkit-container * {
+        writing-mode: horizontal-tb !important;
+        text-orientation: mixed !important;
+    }
+}

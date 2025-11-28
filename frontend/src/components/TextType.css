@@ -1,0 +1,19 @@
+.text-type {
+  display: inline;
+  white-space: inherit;
+  min-width: auto;
+}
+
+.text-type__content {
+  display: inline;
+}
+
+.text-type__cursor {
+  margin-left: 0.25rem;
+  display: inline-block;
+  opacity: 1;
+}
+
+.text-type__cursor--hidden {
+  display: none;
+}

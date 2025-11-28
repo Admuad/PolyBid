@@ -1,0 +1,81 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+
+# Production
+build/
+dist/
+out/
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Local env files
+#.env
+#.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Hardhat
+cache/
+artifacts/
+typechain-types/
+
+# Logs and temp files
+*.log
+*.txt
+!README.txt
+!LICENSE.txt
+
+# Test/debug scripts
+check_*.js
+check_*.ts
+get_*.ts
+*_fixed.ts
+*_test.js
+
+# Large example repos
+zama-fhevm-example/
+*-example/
+
+# Gemini artifacts
+.gemini/
+
+# Install logs
+install.log
+
+# Temporary files
+temp_*
+*.tmp
+
+# OS
+Thumbs.db
+
+# Misc
+.cache

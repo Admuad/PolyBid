@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Privacy-preserving auction powered by Fully Homomorphic Encryption" />
+    <meta name="theme-color" content="#00B8A3" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet" />
+    
+    <title>PolyBid - Private Auction FHE</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- Fetch API polyfill - ensures fetch is available before any wallet libraries load -->
+    <script>
+      // Store the native fetch before wallet extensions can override it
+      if (typeof window.nativeFetch === 'undefined' && typeof fetch !== 'undefined') {
+        window.nativeFetch = fetch;
+      }
+      
+      // Restore fetch if it gets overridden
+      const restoreFetch = () => {
+        if (window.nativeFetch && typeof fetch === 'undefined') {
+          window.fetch = window.nativeFetch;
+        }
+      };
+      
+      // Check periodically if fetch was broken
+      setInterval(() => {
+        if (typeof fetch === 'undefined' && window.nativeFetch) {
+          window.fetch = window.nativeFetch;
+        }
+      }, 100);
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

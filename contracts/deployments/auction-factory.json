@@ -1,0 +1,8 @@
+{
+  "contract": "AuctionFactory",
+  "address": "0x4168574D678D9f54C0B5FF7ddE388aF772310330",
+  "deployer": "0x8daB60a538979846dDBe71c65eb4e2AfC9758237",
+  "network": "sepolia",
+  "chainId": "11155111",
+  "timestamp": "2025-11-27T19:54:16.938Z"
+}
