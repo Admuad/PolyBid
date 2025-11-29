@@ -1,4 +1,7 @@
-import { Github, Twitter, Lock } from 'lucide-react';
+import { Lock } from 'lucide-react';
+import { LottieIcon } from './LottieIcon';
+import githubAnimation from '@/assets/animations/github.json';
+import twitterAnimation from '@/assets/animations/twitter.json';
 
 export function Footer() {
   return (
@@ -18,7 +21,6 @@ export function Footer() {
             </div>
             <p className="text-sm text-gray-400">
               Privacy-preserving auctions using Fully Homomorphic Encryption.
-              Built for the Zama Builder Contest.
             </p>
           </div>
 
@@ -64,7 +66,15 @@ export function Footer() {
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-lg bg-white/5 hover:bg-zama-primary/20 flex items-center justify-center transition-colors group cursor-target"
               >
-                <Github className="w-5 h-5 text-gray-400 group-hover:text-zama-primary" />
+                <LottieIcon
+                  animationData={githubAnimation}
+                  width={24}
+                  height={24}
+                  playOnHover={true}
+                  loop={false}
+                  autoplay={false}
+                  color="white"
+                />
               </a>
               <a
                 href="https://x.com/Adedir2"
@@ -72,7 +82,15 @@ export function Footer() {
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-lg bg-white/5 hover:bg-zama-primary/20 flex items-center justify-center transition-colors group cursor-target"
               >
-                <Twitter className="w-5 h-5 text-gray-400 group-hover:text-zama-primary" />
+                <LottieIcon
+                  animationData={twitterAnimation}
+                  width={24}
+                  height={24}
+                  playOnHover={true}
+                  loop={false}
+                  autoplay={false}
+                  color="white"
+                />
               </a>
             </div>
             <div className="mt-6">
@@ -86,6 +104,7 @@ export function Footer() {
                   src="/zama-logo.svg"
                   alt="Powered by Zama"
                   className="h-8 opacity-60 hover:opacity-100 transition-opacity"
+                  style={{ filter: 'brightness(0) invert(1)' }}
                 />
               </a>
             </div>
@@ -97,7 +116,7 @@ export function Footer() {
             © 2025 PolyBid. Built with 💚 using Zama's FHE technology.
           </p>
           <p className="text-xs text-gray-600 mt-2">
-            Developed by Admuad (Muhammed Adediran) for the Zama Builder Contest
+            Developed by Admuad (Muhammed Adediran)
           </p>
         </div>
       </div>

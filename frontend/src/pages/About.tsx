@@ -2,6 +2,8 @@ import { Shield, Lock, Zap, Code, ExternalLink, ChevronDown } from 'lucide-react
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DotGrid from '@/components/DotGrid';
+import { LottieIcon } from '@/components/LottieIcon';
+import helpAnimation from '@/assets/animations/help.json';
 
 export function About() {
   useEffect(() => {
@@ -375,8 +377,16 @@ export function About() {
 
             {/* FAQ Section */}
             <section className="card-zama">
-              <h2 className="text-3xl font-bold mb-6 text-gradient-zama">
-                ❓ Frequently Asked Questions
+              <h2 className="text-3xl font-bold mb-6 text-gradient-zama flex items-center gap-3">
+                <LottieIcon
+                  animationData={helpAnimation}
+                  width={40}
+                  height={40}
+                  loop={true}
+                  autoplay={true}
+                  color="white"
+                />
+                Frequently Asked Questions
               </h2>
 
               <div className="space-y-4">
@@ -431,10 +441,10 @@ export function About() {
             {/* Creator Info */}
             <section className="card-zama text-center">
               <h2 className="text-3xl font-bold mb-4 text-gradient-zama">
-                Built for Zama Builder Contest
+                Created by Admuad
               </h2>
               <p className="text-gray-300 mb-6">
-                Created by <strong className="text-zama-primary">Admuad (Muhammed Adediran)</strong>
+                <strong className="text-zama-primary">Muhammed Adediran</strong>
               </p>
               <p className="text-sm text-gray-400">
                 This project demonstrates the practical application of Fully Homomorphic Encryption

@@ -261,6 +261,7 @@ export function AuctionDetailModal({
                 endTime={endTime}
                 isOwner={!!isOwner}
                 hasBid={hasBid}
+                onSuccess={onBidSuccess}
               />
             </div>
           </div>

@@ -2,7 +2,7 @@
 
 > **Privacy-Preserving Sealed-Bid Auctions on Blockchain**
 >
-> Built with Zama's fhEVM for the Zama Developer Program
+> Built with Zama's fhEVM
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Solidity](https://img.shields.io/badge/Solidity-^0.8.28-blue)](https://soliditylang.org/)
@@ -119,7 +119,7 @@ User Input (plaintext bid)
 
 **Deployed on Sepolia Testnet**
 
-- **Frontend**: [Coming Soon]
+- **Frontend**: [https://poly-bid.vercel.app/](https://poly-bid.vercel.app/)
 - **Factory Contract**: `0x4168574D678D9f54C0B5FF7ddE388aF772310330`
 - **Network**: Sepolia (Chain ID: 11155111)
 
@@ -395,6 +395,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 <p align="center">
-  <strong>Built with 💚 for the Zama Developer Program</strong><br>
+  <strong>Built with 💚 using Zama's FHE technology</strong><br>
   <em>Making blockchain auctions private, fair, and trustless</em>
 </p>

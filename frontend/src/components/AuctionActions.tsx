@@ -13,6 +13,7 @@ interface AuctionActionsProps {
     endTime: number;
     isOwner: boolean;
     hasBid: boolean;
+    onSuccess?: () => void;
 }
 
 export function AuctionActions({
@@ -21,6 +22,7 @@ export function AuctionActions({
     endTime,
     isOwner,
     hasBid,
+    onSuccess,
 }: AuctionActionsProps) {
     const { address } = useAccount();
     const signer = useEthersSigner();
@@ -101,6 +103,10 @@ export function AuctionActions({
     };
 
     const handleCloseAuction = () => {
+        if (!address) {
+            showErrorToast(new Error('Wallet not connected'), 'wallet');
+            return;
+        }
         setActionStatus('');
         writeContract(
             {
@@ -111,6 +117,7 @@ export function AuctionActions({
             {
                 onSuccess: () => {
                     setActionStatus('✅ Auction closed! You earned the reward.');
+                    onSuccess?.();
                 },
                 onError: (err) => {
                     showErrorToast(err, 'transaction');
@@ -121,6 +128,10 @@ export function AuctionActions({
     };
 
     const handleWithdrawRefund = () => {
+        if (!address) {
+            showErrorToast(new Error('Wallet not connected'), 'wallet');
+            return;
+        }
         setActionStatus('');
         writeContract(
             {
@@ -131,6 +142,7 @@ export function AuctionActions({
             {
                 onSuccess: () => {
                     setActionStatus('✅ Refund withdrawn successfully!');
+                    onSuccess?.();
                 },
                 onError: (err) => {
                     showErrorToast(err, 'transaction');
@@ -141,6 +153,10 @@ export function AuctionActions({
     };
 
     const handleWithdrawProceeds = () => {
+        if (!address) {
+            showErrorToast(new Error('Wallet not connected'), 'wallet');
+            return;
+        }
         setActionStatus('');
         writeContract(
             {
@@ -151,6 +167,7 @@ export function AuctionActions({
             {
                 onSuccess: () => {
                     setActionStatus('✅ Proceeds withdrawn successfully!');
+                    onSuccess?.();
                 },
                 onError: (err) => {
                     showErrorToast(err, 'transaction');

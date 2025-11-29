@@ -1,8 +1,12 @@
 ﻿import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Lock, Search, Filter, TrendingUp, X, Zap, AlertCircle, CheckCircle, Clock, Flame } from 'lucide-react';
+import { Plus, Lock, Filter, TrendingUp, X, Zap, AlertCircle, CheckCircle, Clock, Flame } from 'lucide-react';
 import gsap from 'gsap';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAccount, useWaitForTransactionReceipt } from 'wagmi';
+import Lottie, { LottieRefCurrentProps } from 'lottie-react';
+import searchToXAnimation from '@/assets/animations/searchToX.json';
+import radioButtonAnimation from '@/assets/animations/radioButton.json';
 import { CreateAuctionModal } from '@/components/CreateAuctionModal';
 import { PrivacyBadge } from '@/components/PrivacyBadge';
 import { useAllAuctions, useAuctionStatuses, useCreateAuction } from '@/hooks/useAuction';
@@ -10,6 +14,47 @@ import { AnimatedLock } from '@/components/AnimatedLock';
 import { AuctionCardWrapper } from '@/components/AuctionCardWrapper';
 import { AuctionDetailModalWrapper } from '@/components/AuctionDetailModalWrapper';
 import { FloatingFAB } from '@/components/FloatingFAB';
+
+const AnimatedRadio = ({ checked, label, value, name, onChange }: { checked: boolean, label: string, value: string, name: string, onChange: (e: any) => void }) => {
+  const lottieRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (lottieRef.current) {
+      if (checked) {
+        lottieRef.current.play(); // Play from start to end
+      } else {
+        lottieRef.current.stop(); // Reset to start
+      }
+    }
+  }, [checked]);
+
+  return (
+    <label className="flex items-center gap-3 cursor-pointer group">
+      <div className="relative w-6 h-6 flex items-center justify-center">
+        <input
+          type="radio"
+          name={name}
+          value={value}
+          checked={checked}
+          onChange={onChange}
+          className="sr-only" // Hide the real input
+        />
+        <div className="w-8 h-8 -ml-1"> {/* Adjust size/position as needed */}
+          <Lottie
+            lottieRef={lottieRef}
+            animationData={radioButtonAnimation}
+            loop={false}
+            autoplay={false}
+            style={{ width: '100%', height: '100%', filter: 'brightness(0) invert(1)' }} // Make white
+          />
+        </div>
+      </div>
+      <span className={`text-xs sm:text-sm transition-colors ${checked ? 'text-white font-medium' : 'text-gray-400 group-hover:text-gray-300'}`}>
+        {label}
+      </span>
+    </label>
+  );
+};
 
 interface Toast {
   id: number;
@@ -27,6 +72,7 @@ export function Marketplace() {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const searchIconRef = useRef<LottieRefCurrentProps>(null);
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'ended'>('all');
   const [sortBy, setSortBy] = useState<'ending-soon' | 'recently-started' | 'most-bids'>('ending-soon');
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -115,6 +161,8 @@ export function Marketplace() {
       if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
         if (searchQuery === '') {
           setIsSearchExpanded(false);
+          searchIconRef.current?.setDirection(-1);
+          searchIconRef.current?.play();
         }
       }
     };
@@ -138,16 +186,43 @@ export function Marketplace() {
   // Fetch statuses for all auctions efficiently
   const statuses = useAuctionStatuses(auctionAddresses);
 
-  // Filter auctions based on status
-  const activeAuctionsList = auctionAddresses.filter(addr => {
+  // Filter auctions based on status and REVERSE to show newest first
+  const activeAuctionsList = [...auctionAddresses].reverse().filter(addr => {
     const status = statuses.get(addr);
     return status ? status.isActive : false;
   });
 
-  const endedAuctionsList = auctionAddresses.filter(addr => {
+  const endedAuctionsList = [...auctionAddresses].reverse().filter(addr => {
     const status = statuses.get(addr);
     // Consider ended if NOT active (even if auctionEnded is false on contract)
     return status ? !status.isActive : false;
+  });
+
+  // Apply status filter
+  let filteredAuctions = [...auctionAddresses].reverse();
+  if (statusFilter === 'active') {
+    filteredAuctions = activeAuctionsList;
+  } else if (statusFilter === 'ended') {
+    filteredAuctions = endedAuctionsList;
+  }
+
+  // Apply sorting
+  const sortedAuctions = [...filteredAuctions].sort((a, b) => {
+    const statusA = statuses.get(a);
+    const statusB = statuses.get(b);
+
+    if (sortBy === 'ending-soon') {
+      const timeA = statusA?.endTime || Infinity;
+      const timeB = statusB?.endTime || Infinity;
+      return timeA - timeB;
+    } else if (sortBy === 'recently-started') {
+      return 0;
+    } else if (sortBy === 'most-bids') {
+      const countA = statusA?.bidderCount || 0;
+      const countB = statusB?.bidderCount || 0;
+      return countB - countA;
+    }
+    return 0;
   });
 
   // Sort for Trending (by bidder count)
@@ -247,35 +322,55 @@ export function Marketplace() {
             {/* Animated Search - Expands Left */}
             <div
               ref={searchContainerRef}
-              className="flex items-center gap-2 px-3 sm:px-4 py-3 bg-gray-900 border border-zama-primary/30 rounded-lg transition-all h-full overflow-hidden cursor-target"
+              className={`flex items-center gap-2 px-3 sm:px-4 py-3 bg-gray-900 border border-zama-primary/30 rounded-lg transition-all h-full overflow-hidden ${!isSearchExpanded ? 'cursor-target' : ''}`}
               style={{
                 width: isSearchExpanded ? 'calc(100% - 65px)' : '3.5rem',
                 maxWidth: isSearchExpanded ? '500px' : '3.5rem',
               }}
-              onClick={() => !isSearchExpanded && setIsSearchExpanded(true)}
+              onClick={() => {
+                if (!isSearchExpanded) {
+                  setIsSearchExpanded(true);
+                  searchIconRef.current?.setDirection(1);
+                  searchIconRef.current?.play();
+                }
+              }}
             >
-              {!isSearchExpanded ? (
-                <Search className="w-5 h-5 text-gray-400 flex-shrink-0 cursor-pointer" />
-              ) : (
+              <div className="flex-shrink-0 cursor-pointer" style={{ width: 20, height: 20 }}>
+                <Lottie
+                  lottieRef={searchIconRef}
+                  animationData={searchToXAnimation}
+                  loop={false}
+                  autoplay={false}
+                  style={{
+                    width: 20,
+                    height: 20,
+                    filter: 'brightness(0) invert(1)', // White color
+                  }}
+                />
+              </div>
+
+              {isSearchExpanded && (
                 <>
-                  <Search className="w-5 h-5 text-gray-400 flex-shrink-0" />
                   <input
                     ref={searchInputRef}
                     type="text"
                     placeholder="Search by name..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="flex-1 bg-transparent text-white placeholder-gray-500 focus:outline-none text-xs sm:text-sm min-w-0"
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex-1 bg-transparent text-white placeholder-gray-500 focus:outline-none text-xs sm:text-sm min-w-0 pr-8"
                   />
                   {searchQuery && (
                     <button
-                      onClick={(e) => {
+                      type="button"
+                      onMouseDown={(e) => {
+                        e.preventDefault();
                         e.stopPropagation();
                         setSearchQuery('');
                       }}
-                      className="text-gray-400 hover:text-white flex-shrink-0 cursor-target"
+                      className="absolute right-3 z-50 text-gray-400 hover:text-white flex-shrink-0 cursor-pointer p-1 hover:bg-white/10 rounded-full transition-colors cursor-target"
                     >
-                      <X className="w-5 h-5" />
+                      <X className="w-4 h-4" />
                     </button>
                   )}
                 </>
@@ -283,60 +378,64 @@ export function Marketplace() {
             </div>
           </div>
 
-          {/* Filters Panel */}
-          {showFilters && (
-            <div className="card-zama p-4 sm:p-6 space-y-4 mt-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {/* Status Filter */}
-                <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-3">Status</label>
-                  <div className="space-y-2">
-                    {[
-                      { value: 'all', label: '📋 All Auctions' },
-                      { value: 'active', label: '🟢 Active' },
-                      { value: 'ended', label: '🏁 Completed' },
-                    ].map((option) => (
-                      <label key={option.value} className="flex items-center gap-3 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="status"
-                          value={option.value}
-                          checked={statusFilter === option.value}
-                          onChange={(e) => setStatusFilter(e.target.value as any)}
-                          className="w-4 h-4 accent-zama-primary"
-                        />
-                        <span className="text-xs sm:text-sm text-gray-300">{option.label}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
+          {/* Filters Panel with Slide Animation */}
+          <AnimatePresence>
+            {showFilters && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="overflow-hidden"
+              >
+                <div className="card-zama p-4 sm:p-6 space-y-4 mt-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {/* Status Filter */}
+                    <div>
+                      <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-3">Status</label>
+                      <div className="space-y-2">
+                        {[
+                          { value: 'all', label: '📋 All Auctions' },
+                          { value: 'active', label: '🟢 Active' },
+                          { value: 'ended', label: '🏁 Completed' },
+                        ].map((option) => (
+                          <AnimatedRadio
+                            key={option.value}
+                            name="status"
+                            value={option.value}
+                            checked={statusFilter === option.value}
+                            onChange={(e) => setStatusFilter(e.target.value as any)}
+                            label={option.label}
+                          />
+                        ))}
+                      </div>
+                    </div>
 
-                {/* Sort By */}
-                <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-3">Sort By</label>
-                  <div className="space-y-2">
-                    {[
-                      { value: 'ending-soon', label: '⏰ Ending Soon' },
-                      { value: 'recently-started', label: '✨ Recently Started' },
-                      { value: 'most-bids', label: '🔥 Most Bids' },
-                    ].map((option) => (
-                      <label key={option.value} className="flex items-center gap-3 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="sort"
-                          value={option.value}
-                          checked={sortBy === option.value}
-                          onChange={(e) => setSortBy(e.target.value as any)}
-                          className="w-4 h-4 accent-zama-primary"
-                        />
-                        <span className="text-xs sm:text-sm text-gray-300">{option.label}</span>
-                      </label>
-                    ))}
+                    {/* Sort By */}
+                    <div>
+                      <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-3">Sort By</label>
+                      <div className="space-y-2">
+                        {[
+                          { value: 'ending-soon', label: '⏰ Ending Soon' },
+                          { value: 'recently-started', label: '✨ Recently Started' },
+                          { value: 'most-bids', label: '🔥 Most Bids' },
+                        ].map((option) => (
+                          <AnimatedRadio
+                            key={option.value}
+                            name="sort"
+                            value={option.value}
+                            checked={sortBy === option.value}
+                            onChange={(e) => setSortBy(e.target.value as any)}
+                            label={option.label}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Active Auctions Section */}

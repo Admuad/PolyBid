@@ -12,10 +12,16 @@ interface AuctionDetailModalWrapperProps {
 export function AuctionDetailModalWrapper({ auctionAddress, onClose, onBidStatus }: AuctionDetailModalWrapperProps) {
     const metadata = useAuctionMetadata(auctionAddress);
     const status = useSpecificAuctionStatus(auctionAddress);
-    const { bidderCount } = useSpecificAuctionBidders(auctionAddress);
+    const { bidderCount, refetch: refetchBidders } = useSpecificAuctionBidders(auctionAddress);
     const { winner } = useSpecificAuctionWinner(auctionAddress);
     const { address } = useAccount();
-    const { hasBid } = useSpecificHasSubmittedBid(auctionAddress, address);
+    const { hasBid, refetch: refetchHasBid } = useSpecificHasSubmittedBid(auctionAddress, address);
+
+    const handleRefresh = () => {
+        status.refetch();
+        refetchBidders();
+        refetchHasBid();
+    };
 
     return (
         <AuctionDetailModal
@@ -32,7 +38,7 @@ export function AuctionDetailModalWrapper({ auctionAddress, onClose, onBidStatus
             winner={winner}
             hasBid={hasBid}
             imageDataUri={metadata.imageDataUri}
-            onBidSuccess={() => { }}
+            onBidSuccess={handleRefresh}
             onBidStatus={onBidStatus}
         />
     );

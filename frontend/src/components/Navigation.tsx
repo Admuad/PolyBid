@@ -1,27 +1,48 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Gavel, History, Info, Lock, X, User } from 'lucide-react';
+import { Gavel, History, Lock, X, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import Lottie from 'lottie-react';
+import { LottieIcon } from './LottieIcon';
+import homeAnimation from '@/assets/animations/home.json';
+import infoAnimation from '@/assets/animations/info.json';
+import menuV2Animation from '@/assets/animations/menuV2.json';
 
-const CustomMenuIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="feather feather-menu"
-  >
-    <line x1="3" y1="12" x2="21" y2="12"></line>
-    <line x1="3" y1="6" x2="21" y2="6"></line>
-    <line x1="3" y1="18" x2="21" y2="18"></line>
-  </svg>
-);
+const MobileMenuIcon = ({ isOpen }: { isOpen: boolean }) => {
+  const lottieRef = useRef<any>(null);
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    if (lottieRef.current) {
+      if (isFirstRender.current) {
+        isFirstRender.current = false;
+        // Don't play on mount, just set initial frame if needed
+        if (isOpen) {
+          lottieRef.current.goToAndStop(lottieRef.current.getDuration(true), true);
+        } else {
+          lottieRef.current.goToAndStop(0, true);
+        }
+        return;
+      }
+
+      lottieRef.current.setSpeed(isOpen ? 1 : -1);
+      lottieRef.current.play();
+    }
+  }, [isOpen]);
+
+  return (
+    <div className="w-8 h-8 flex items-center justify-center">
+      <Lottie
+        lottieRef={lottieRef}
+        animationData={menuV2Animation}
+        loop={false}
+        autoplay={false}
+        style={{ width: '100%', height: '100%', filter: 'invert(1)' }} // White color
+      />
+    </div>
+  );
+};
 
 export function Navigation() {
   const location = useLocation();
@@ -48,7 +69,7 @@ export function Navigation() {
 
           {/* Desktop Navigation Links */}
           <div className="hidden lg:flex items-center gap-1">
-            <NavLink to="/" icon={<Home className="w-4 h-4" />} active={isActive('/')}>
+            <NavLink to="/" animationData={homeAnimation} active={isActive('/')}>
               Home
             </NavLink>
             <NavLink to="/marketplace" icon={<Gavel className="w-4 h-4" />} active={isActive('/marketplace')}>
@@ -60,7 +81,7 @@ export function Navigation() {
             <NavLink to="/profile" icon={<User className="w-4 h-4" />} active={isActive('/profile')}>
               Profile
             </NavLink>
-            <NavLink to="/about" icon={<Info className="w-4 h-4" />} active={isActive('/about')}>
+            <NavLink to="/about" animationData={infoAnimation} active={isActive('/about')}>
               About
             </NavLink>
           </div>
@@ -85,7 +106,7 @@ export function Navigation() {
               className="lg:hidden p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-target"
               aria-label="Toggle menu"
             >
-              {isOpen ? <X className="w-6 h-6" /> : <CustomMenuIcon />}
+              <MobileMenuIcon isOpen={isOpen} />
             </button>
           </div>
         </div>
@@ -101,7 +122,7 @@ export function Navigation() {
             className="lg:hidden border-t border-zama-primary/20 glass-morphism-dark overflow-hidden"
           >
             <div className="container mx-auto px-4 py-4 flex flex-col gap-2">
-              <MobileNavLink to="/" icon={<Home className="w-4 h-4" />} active={isActive('/')} onClick={closeMenu}>
+              <MobileNavLink to="/" animationData={homeAnimation} active={isActive('/')} onClick={closeMenu}>
                 Home
               </MobileNavLink>
               <MobileNavLink to="/marketplace" icon={<Gavel className="w-4 h-4" />} active={isActive('/marketplace')} onClick={closeMenu}>
@@ -113,7 +134,7 @@ export function Navigation() {
               <MobileNavLink to="/profile" icon={<User className="w-4 h-4" />} active={isActive('/profile')} onClick={closeMenu}>
                 Profile
               </MobileNavLink>
-              <MobileNavLink to="/about" icon={<Info className="w-4 h-4" />} active={isActive('/about')} onClick={closeMenu}>
+              <MobileNavLink to="/about" animationData={infoAnimation} active={isActive('/about')} onClick={closeMenu}>
                 About
               </MobileNavLink>
             </div>
@@ -126,13 +147,16 @@ export function Navigation() {
 
 interface NavLinkProps {
   to: string;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
+  animationData?: any;
   active: boolean;
   children: React.ReactNode;
   onClick?: () => void;
 }
 
-function NavLink({ to, icon, active, children }: NavLinkProps) {
+function NavLink({ to, icon, animationData, active, children }: NavLinkProps) {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
     <Link to={to}>
       <motion.div
@@ -143,6 +167,8 @@ function NavLink({ to, icon, active, children }: NavLinkProps) {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         {/* Active indicator */}
         {active && (
@@ -154,7 +180,20 @@ function NavLink({ to, icon, active, children }: NavLinkProps) {
         )}
 
         {/* Content */}
-        <span className="relative z-10">{icon}</span>
+        <span className="relative z-10 flex items-center justify-center h-5 w-5">
+          {animationData ? (
+            <LottieIcon
+              animationData={animationData}
+              width={20}
+              height={20}
+              isHovered={isHovered}
+              loop={false}
+              color="white"
+            />
+          ) : (
+            icon
+          )}
+        </span>
         <span className="font-medium relative z-10">{children}</span>
 
         {/* Hover shine effect */}
@@ -171,7 +210,9 @@ function NavLink({ to, icon, active, children }: NavLinkProps) {
   );
 }
 
-function MobileNavLink({ to, icon, active, children, onClick }: NavLinkProps) {
+function MobileNavLink({ to, icon, animationData, active, children, onClick }: NavLinkProps) {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
     <Link to={to} onClick={onClick} className="block w-full">
       <motion.div
@@ -180,9 +221,24 @@ function MobileNavLink({ to, icon, active, children, onClick }: NavLinkProps) {
           : 'text-gray-300 hover:bg-white/5'
           }`}
         whileTap={{ scale: 0.98 }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         {/* Content */}
-        <span className="relative z-10">{icon}</span>
+        <span className="relative z-10 flex items-center justify-center h-5 w-5">
+          {animationData ? (
+            <LottieIcon
+              animationData={animationData}
+              width={20}
+              height={20}
+              isHovered={isHovered}
+              loop={false}
+              color="white"
+            />
+          ) : (
+            icon
+          )}
+        </span>
         <span className="font-medium relative z-10">{children}</span>
       </motion.div>
     </Link>
