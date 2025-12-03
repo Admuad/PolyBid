@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { useAuctionMetadata, useSpecificAuctionStatus, useSpecificAuctionBidders, useSpecificAuctionWinner, useSpecificHasSubmittedBid } from '@/hooks/useAuction';
 import { useAccount } from 'wagmi';
 import { AuctionDetailModal } from './AuctionDetailModal';

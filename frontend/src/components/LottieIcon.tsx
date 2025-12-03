@@ -1,5 +1,5 @@
 import Lottie, { LottieRefCurrentProps } from 'lottie-react';
-import { CSSProperties, useRef, useState, useEffect } from 'react';
+import { CSSProperties, useRef, useEffect } from 'react';
 
 interface LottieIconProps {
     animationData: any;
@@ -29,16 +29,14 @@ export function LottieIcon({
     isHovered: externalIsHovered,
 }: LottieIconProps) {
     const lottieRef = useRef<LottieRefCurrentProps>(null);
-    const [isPlaying, setIsPlaying] = useState(autoplay);
 
-    // Handle external hover changes
+
     // Handle external hover changes
     useEffect(() => {
         if (externalIsHovered !== undefined && lottieRef.current) {
             if (externalIsHovered) {
                 lottieRef.current.setDirection(1);
                 lottieRef.current.play();
-                setIsPlaying(true);
             } else if (!loop) {
                 lottieRef.current.setDirection(-1);
                 lottieRef.current.play();
@@ -50,7 +48,6 @@ export function LottieIcon({
         if (playOnHover && lottieRef.current) {
             lottieRef.current.stop();
             lottieRef.current.play();
-            setIsPlaying(true);
         }
     };
 
@@ -60,7 +57,6 @@ export function LottieIcon({
             setTimeout(() => {
                 if (lottieRef.current) {
                     lottieRef.current.goToAndStop(0, true);
-                    setIsPlaying(false);
                 }
             }, 1000);
         }
@@ -70,7 +66,6 @@ export function LottieIcon({
         if (playOnClick && lottieRef.current) {
             lottieRef.current.stop();
             lottieRef.current.play();
-            setIsPlaying(true);
         }
     };
 

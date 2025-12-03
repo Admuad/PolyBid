@@ -37,8 +37,8 @@ export default defineConfig({
     open: true,
     allowedHosts: ['929b068c7fd4.ngrok-free.app'],
     headers: {
-      'Cross-Origin-Opener-Policy': 'unsafe-none',
-      'Cross-Origin-Embedder-Policy': 'unsafe-none',
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'credentialless',
     },
   },
   build: {
